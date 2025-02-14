@@ -5,6 +5,7 @@ import com.controller.WiseSayingController
 class App(private val wiseSayingController: WiseSayingController) {
 
     fun run() {
+
         println("== 명언 앱 ==")
 
         while (true) {
