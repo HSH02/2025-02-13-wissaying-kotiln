@@ -9,6 +9,4 @@ fun readUserInput(prompt: String): String {
     return readlnOrNull()?.trim() ?: ""
 }
 
-fun formatReadWiseSaying(id: Int, author: String, content: String): String {
-    return "$id / $author / $content"
-}
+fun formatReadWiseSaying(id: Int, author: String, content: String): String = "$id / $author / $content"
