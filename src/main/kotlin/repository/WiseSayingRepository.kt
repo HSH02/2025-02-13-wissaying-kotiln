@@ -9,19 +9,29 @@ class WiseSayingRepository {
     fun create(content: String, author: String): WiseSaying {
         val wiseSaying = WiseSaying(++lastId, content, author)
         wiseSayings.add(wiseSaying)
-        return wiseSaying;
+        return wiseSaying
     }
 
-    fun read(): ArrayList<WiseSaying> {
+    fun findAll(): ArrayList<WiseSaying> {
         return wiseSayings
-    }
-
-    fun delete(id: Int) : Boolean {
-        val index = findById(id)
-        return wiseSayings.remove(index)
     }
 
     fun findById(id: Int): WiseSaying? {
         return wiseSayings.find { it.id == id }
     }
+
+    fun deleteById(id: Int): Boolean {
+        val index = findById(id)
+        return wiseSayings.remove(index)
+    }
+
+    fun updateById(id: Int, content: String, author: String) {
+        val index = wiseSayings.indexOfFirst { it.id == id }
+        if (index != -1) {
+            wiseSayings[index] = wiseSayings[index].copy(content = content, author = author)
+        }
+
+    }
+
+
 }
