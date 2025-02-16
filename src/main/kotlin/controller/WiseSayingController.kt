@@ -12,9 +12,9 @@ class WiseSayingController(private val wiseSayingService: WiseSayingService) {
         cmd.startsWith("목록") -> handleRead()
         cmd.startsWith("수정") -> handleUpdate(cmd)
         cmd.startsWith("삭제") -> handleDelete(cmd)
+        cmd.startsWith("빌드") -> handleBuild()
         else -> println("알 수 없는 명령어입니다. 다시 입력해주세요.")
     }
-
 
     private fun handleCreate() {
         val content = readUserInput("명언 : ").takeIf { it.isNotBlank() } ?: run {
@@ -30,6 +30,7 @@ class WiseSayingController(private val wiseSayingService: WiseSayingService) {
         wiseSayingService.create(content, author)
             .also { "${it.id}번 명언이 등록되었습니다." }
     }
+
 
     private fun handleRead() {
         println("번호 / 작가 / 명언")
@@ -63,4 +64,8 @@ class WiseSayingController(private val wiseSayingService: WiseSayingService) {
         } ?: println("올바른 id를 입력해주세요.")
     }
 
+    private fun handleBuild() {
+        wiseSayingService.build()
+        println("data.json 파일의 내용이 갱신되었습니다.")
+    }
 }

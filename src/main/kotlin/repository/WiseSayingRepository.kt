@@ -1,8 +1,10 @@
 package com.repository
 
 import com.entity.WiseSaying
+import com.util.DB.DATA_JSON
 import com.util.DB.DB_URL
 import com.util.DB.LAST_ID_FILE
+import com.util.buildDataJson
 import com.util.fromJson
 import com.util.toJson
 import java.io.File
@@ -13,12 +15,15 @@ class WiseSayingRepository {
 
     private val dbFolder = File(DB_URL)
     private val lastIdFile = File(dbFolder, LAST_ID_FILE)
+    private val buildJsonFile = File(dbFolder, DATA_JSON)
 
     init {
         // 데이터베이스 폴더가 존재하지 않으면 생성
         if (!dbFolder.exists()) dbFolder.mkdirs()
-        // 마지막 ID를 저장하는 파일이 없으면 생성 후 초기값 기록
+        // 파일이 없을 경우 생성
         if (!lastIdFile.exists()) lastIdFile.writeText(lastId.toString())
+        if (!buildJsonFile.exists()) buildJsonFile.createNewFile()
+
 
         // 마지막 ID 파일을 읽어 lastId 변수에 할당, 없으면 0으로
         lastId = lastIdFile.readText().toIntOrNull() ?: 0
@@ -26,7 +31,7 @@ class WiseSayingRepository {
         //  dbFolder 내의 모든 JSON 파일을 순회하며 파일 내용을 읽어 객체로 변환 후 리스트에 추가
         dbFolder.listFiles { file -> file.extension == "json" }?.forEach { file ->
             val json = file.readText()
-            fromJson(json)?.let { wiseSayings.add(it) }
+            json.fromJson()?.let { wiseSayings.add(it) }
         }
     }
 
@@ -36,7 +41,7 @@ class WiseSayingRepository {
         wiseSayings.add(wiseSaying)
 
         // 새 객체를 JSON 문자열로 변환하여 별도의 파일로 저장 (파일명은 ID.json)
-        File(dbFolder, "$newId.json").writeText(toJson(wiseSaying))
+        File(dbFolder, "$newId.json").writeText(wiseSaying.toJson())
         // 파일 관련: 마지막 ID 파일 업데이트
         lastIdFile.writeText(newId.toString())
         return wiseSaying
@@ -58,7 +63,6 @@ class WiseSayingRepository {
         return false
     }
 
-
     fun updateById(id: Int, content: String, author: String) {
         wiseSayings.indexOfFirst { it.id == id }
             .takeIf { it != -1 }
@@ -66,8 +70,14 @@ class WiseSayingRepository {
                 val updated = wiseSayings[index].copy(content = content, author = author)
                 wiseSayings[index] = updated
                 // 업데이트된 객체를 JSON 문자열로 변환하여 기존 파일에 덮어쓰기
-                File(dbFolder, "$id.json").writeText(toJson(updated))
+                File(dbFolder, "$id.json").writeText(updated.toJson())
             }
+    }
+
+    fun build() {
+        val wiseSayings = findAll()
+        val dataJson = wiseSayings.buildDataJson()
+        buildJsonFile.writeText(dataJson)
     }
 
 }

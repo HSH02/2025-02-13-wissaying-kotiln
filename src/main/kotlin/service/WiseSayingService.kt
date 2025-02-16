@@ -19,4 +19,8 @@ class WiseSayingService(private val wiseSayingRepository: WiseSayingRepository) 
 
     fun update(id: Int, content: String, author: String) =
         wiseSayingRepository.updateById(id, content, author)
+
+    fun build() {
+        wiseSayingRepository.build()
+    }
 }
