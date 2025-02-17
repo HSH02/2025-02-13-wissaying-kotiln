@@ -28,7 +28,7 @@ class Rq(cmd: String) {
         }
     }
 
-    private fun getParamValue(name: String): String? {
+    fun getParamValue(name: String): String? {
         return paramMap[name]
     }
 

@@ -39,6 +39,20 @@ class WiseSayingFileRepository : WiseSayingRepository {
             ?.let { WiseSaying.fromJson(it.readText()) }
     }
 
+    fun findByKeyword(keyword: String, keywordType: String?): List<WiseSaying> {
+        return findAll()
+            .filter { wiseSaying ->
+                when (keywordType) {
+                    "author" -> wiseSaying.author.contains(keyword)
+                    "content" -> wiseSaying.content.contains(keyword)
+                    else ->
+                        wiseSaying.author.contains(keyword) ||
+                        wiseSaying.content.contains(keyword)
+                }
+            }
+
+    }
+
     override fun delete(wiseSaying: WiseSaying) {
         tableDirPath.resolve("${wiseSaying.id}.json").toFile().delete()
     }
@@ -74,7 +88,7 @@ class WiseSayingFileRepository : WiseSayingRepository {
         }
     }
 
-    fun saveOnDisk(wiseSaying: WiseSaying) {
+    private fun saveOnDisk(wiseSaying: WiseSaying) {
         mkdirDbDir()
 
         val wiseSayingFile = tableDirPath.resolve("${wiseSaying.id}.json")

@@ -22,7 +22,7 @@ class WiseSayingApp {
                 }
 
                 "등록" -> wiseSayingController.handleCreate()
-                "목록" -> wiseSayingController.handleRead()
+                "목록" -> wiseSayingController.handleRead(rq)
                 "수정" -> wiseSayingController.handleUpdate(rq)
                 "삭제" -> wiseSayingController.handleDelete(rq)
                 "빌드" -> wiseSayingController.handleBuild()

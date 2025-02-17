@@ -21,15 +21,28 @@ class WiseSayingController {
     }
 
 
-    fun handleRead() {
+    fun handleRead(rq: Rq) {
         if (wiseSayingService.isEmpty()) {
             println("등록된 명언이 없습니다.")
             return
         }
 
+        val keyword = rq.getParamValue("keyword") ?: ""
+        val keywordType = rq.getParamValue("keywordType")
+
+        val wiseSayings = if (keywordType?.isNotEmpty() == true) {
+            println("----------------------")
+            println("검색타입 : $keywordType")
+            println("검색어 : $keyword")
+            println("----------------------")
+            wiseSayingService.findByKeyword(keyword, keywordType)
+        } else {
+            wiseSayingService.findAll()
+        }
+
         println("번호 / 작가 / 명언")
         println("----------------------")
-        wiseSayingService.findAll().forEach {
+        wiseSayings.forEach {
             println("${it.id} / ${it.author} / ${it.content}")
         }
     }
