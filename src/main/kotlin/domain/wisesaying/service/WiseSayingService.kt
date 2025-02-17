@@ -7,7 +7,7 @@ class WiseSayingService {
     private val wiseSayingRepository by lazy { SingletonScope.wiseSayingRepository }
 
     fun create(content: String, author: String): WiseSaying =
-        wiseSayingRepository.save(WiseSaying(content, author))
+        wiseSayingRepository.save(WiseSaying(content = content,  author = author))
 
     fun findAll(): List<WiseSaying> =
         wiseSayingRepository.findAll()

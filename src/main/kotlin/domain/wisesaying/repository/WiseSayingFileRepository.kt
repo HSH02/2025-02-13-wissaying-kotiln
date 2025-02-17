@@ -61,7 +61,7 @@ class WiseSayingFileRepository : WiseSayingRepository {
         buildJsonFile.writeText(jsonArray)
     }
 
-    private val tableDirPath: Path
+    val tableDirPath: Path
         get() {
             return DBConfig.dbDirPath.resolve("wiseSaying")
         }
@@ -74,14 +74,14 @@ class WiseSayingFileRepository : WiseSayingRepository {
         }
     }
 
-    private fun saveOnDisk(wiseSaying: WiseSaying) {
+    fun saveOnDisk(wiseSaying: WiseSaying) {
         mkdirDbDir()
 
         val wiseSayingFile = tableDirPath.resolve("${wiseSaying.id}.json")
         wiseSayingFile.toFile().writeText(wiseSaying.json)
     }
 
-    private fun saveLastId(lastId: Int) {
+    fun saveLastId(lastId: Int) {
         mkdirDbDir()
 
         tableDirPath.resolve("lastId.txt")
@@ -89,7 +89,7 @@ class WiseSayingFileRepository : WiseSayingRepository {
             .writeText(lastId.toString())
     }
 
-    private fun loadLastId(): Int {
+    fun loadLastId(): Int {
         return try {
             tableDirPath.resolve("lastId.txt")
                 .toFile()

@@ -1,4 +1,4 @@
-//package com.domain.wisesaying.repository
+package domain.wisesaying.repository//package com.domain.wisesaying.repository
 //
 //import com.domain.wisesaying.entity.WiseSaying
 //import com.global.bean.DB.DATA_JSON
