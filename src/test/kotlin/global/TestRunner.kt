@@ -45,4 +45,12 @@ object TestRunner {
                 .replace("\r\n", "\n") // 윈도우와 유닉스 개행 문자 차이 표준화
         }
     }
+
+    fun makeSampleData(size: Int) {
+        val input = (1..size)
+            .joinToString("\n") { i ->
+                "등록\n명언 $i\n작자미상\n"
+            }
+        run(input)
+    }
 }

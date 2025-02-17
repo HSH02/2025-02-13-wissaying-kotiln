@@ -27,24 +27,45 @@ class WiseSayingController {
             return
         }
 
-        val keyword = rq.getParamValue("keyword") ?: ""
+        val keyword = rq.getParamValue("keyword", "")
         val keywordType = rq.getParamValue("keywordType")
 
-        val wiseSayings = if (keywordType?.isNotEmpty() == true) {
+        val itemsPerPage = 5
+        val pageNo: Int = rq.getParamValueAsInt("page", 1)
+
+
+        val wiseSayingPage = if (keywordType?.isNotEmpty() == true) {
+            wiseSayingService.findByKeywordPaged(keyword, keywordType, itemsPerPage, pageNo)
+        } else {
+            wiseSayingService.findAllPaged(itemsPerPage, pageNo)
+        }
+
+        if (keyword.isNotBlank()) {
             println("----------------------")
             println("검색타입 : $keywordType")
             println("검색어 : $keyword")
             println("----------------------")
-            wiseSayingService.findByKeyword(keyword, keywordType)
-        } else {
-            wiseSayingService.findAll()
         }
 
         println("번호 / 작가 / 명언")
         println("----------------------")
-        wiseSayings.forEach {
+        wiseSayingPage.content.forEach {
             println("${it.id} / ${it.author} / ${it.content}")
         }
+
+        println("----------------------")
+        // 총 페이지 수 계산 (예: 전체 10개, 페이지당 5개이면 2페이지)
+        val totalPages = if (wiseSayingPage.totalItems % itemsPerPage == 0)
+            wiseSayingPage.totalItems / itemsPerPage
+        else
+            wiseSayingPage.totalItems / itemsPerPage + 1
+
+        // 네비게이션 문자열 작성 (현재 페이지는 대괄호로 표시)
+        val navigation = (1..totalPages).joinToString(" / ") { page ->
+            if (page == wiseSayingPage.pageNo) "[$page]" else "$page"
+        }
+
+        println("페이지 : $navigation")
     }
 
     fun handleDelete(rq: Rq) {

@@ -2,7 +2,8 @@ package com.domain.wisesaying.repository
 
 import com.domain.wisesaying.entity.WiseSaying
 import com.global.bean.DBConfig
-import com.ll.domain.wiseSaying.wiseSaying.repository.WiseSayingRepository
+import domain.wisesaying.repository.WiseSayingRepository
+import standard.dto.Page
 import java.nio.file.Path
 
 class WiseSayingFileRepository : WiseSayingRepository {
@@ -28,6 +29,7 @@ class WiseSayingFileRepository : WiseSayingRepository {
             .listFiles()
             ?.filter { it.extension == "json" }
             ?.map { WiseSaying.fromJson(it.readText()) }
+            ?.sortedByDescending { it.id }
             ?: emptyList()
     }
 
@@ -39,7 +41,7 @@ class WiseSayingFileRepository : WiseSayingRepository {
             ?.let { WiseSaying.fromJson(it.readText()) }
     }
 
-    fun findByKeyword(keyword: String, keywordType: String?): List<WiseSaying> {
+    override fun findByKeyword(keyword: String, keywordType: String?): List<WiseSaying> {
         return findAll()
             .filter { wiseSaying ->
                 when (keywordType) {
@@ -47,10 +49,35 @@ class WiseSayingFileRepository : WiseSayingRepository {
                     "content" -> wiseSaying.content.contains(keyword)
                     else ->
                         wiseSaying.author.contains(keyword) ||
-                        wiseSaying.content.contains(keyword)
+                                wiseSaying.content.contains(keyword)
                 }
             }
 
+    }
+
+    override fun findAllPaged(itemsPerPage: Int, pageNo: Int): Page<WiseSaying> {
+        val wiseSayings = findAll()
+
+        val content = wiseSayings
+            .drop((pageNo - 1) * itemsPerPage)
+            .take(itemsPerPage)
+
+        return Page(wiseSayings.size, itemsPerPage, pageNo, "", "", content)
+    }
+
+    override fun findByKeywordPaged(
+        keywordType: String,
+        keyword: String,
+        itemsPerPage: Int,
+        pageNo: Int
+    ): Page<WiseSaying> {
+        val wiseSayings = findByKeyword(keywordType, keyword)
+
+        val content = wiseSayings
+            .drop((pageNo - 1) * itemsPerPage)
+            .take(itemsPerPage)
+
+        return Page(wiseSayings.size, itemsPerPage, pageNo, keywordType, keyword, content)
     }
 
     override fun delete(wiseSaying: WiseSaying) {

@@ -32,6 +32,10 @@ class Rq(cmd: String) {
         return paramMap[name]
     }
 
+    fun getParamValue(name: String, default: String): String {
+        return getParamValue(name) ?: default
+    }
+
     fun getParamValueAsInt(name: String, default: Int): Int {
         val paramValue = getParamValue(name) ?: return default
 
